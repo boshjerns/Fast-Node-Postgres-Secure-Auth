@@ -134,35 +134,35 @@ npm install
 
 ```mermaid
 sequenceDiagram
-    %% Apply a custom high-contrast light theme
+    %% Apply a custom dark theme with light text for GitHub dark mode compatibility
     %%{init: {
-        'theme': 'base', 
+        'theme': 'base',
         'themeVariables': {
-            'background': '#FFFFFF',
-            'primaryColor': '#F8F8F8',
-            'primaryBorderColor': '#4A4A4A',
-            'secondaryColor': '#F0F0F0',
-            'tertiaryColor': '#E0E0E0',
-            'primaryTextColor': '#24292e',
-            'secondaryTextColor': '#24292e',
-            'tertiaryTextColor': '#24292e',
-            'lineColor': '#4A4A4A',
-            'textColor': '#24292e',
+            'background': '#20232A',             // Dark background for the diagram area
+            'primaryColor': '#282C34',         // Background for participant boxes, notes, etc.
+            'primaryBorderColor': '#ABB2BF',    // Light border for boxes
+            'secondaryColor': '#2C313A',       // Slightly different dark for other elements if needed
+            'tertiaryColor': '#323842',        // Even more different dark
+            'primaryTextColor': '#D3D3D3',     // Light grey text
+            'secondaryTextColor': '#D3D3D3',   // Light grey text
+            'tertiaryTextColor': '#D3D3D3',    // Light grey text
+            'lineColor': '#ABB2BF',           // Light grey lines
+            'textColor': '#D3D3D3',           // General text color (light grey)
             'fontSize': '13px',
             'sequenceParticipantFontSize': '14px',
             'sequenceNoteFontSize': '13px',
-            'participantBorder': '#4A4A4A',
-            'participantBackground': '#F0F0F0',
-            'participantTextColor': '#24292e',
-            'noteBorderColor': '#4A4A4A',
-            'noteBkgColor': '#F8F8F8',
-            'noteTextColor': '#24292e',
-            'actorBorder': '#4A4A4A',
-            'actorBkg': '#F0F0F0',
-            'actorTextColor': '#24292e',
-            'labelBoxBkgColor': '#F0F0F0',
-            'labelBoxBorderColor': '#4A4A4A',
-            'altBackground': '#FFFFFF'
+            'participantBorder': '#ABB2BF',
+            'participantBackground': '#282C34',
+            'participantTextColor': '#E0E0E0', // Even lighter text for participants for emphasis
+            'noteBorderColor': '#ABB2BF',
+            'noteBkgColor': '#282C34',
+            'noteTextColor': '#E0E0E0',     // Lighter text for notes
+            'actorBorder': '#ABB2BF',
+            'actorBkg': '#282C34',
+            'actorTextColor': '#E0E0E0',
+            'labelBoxBkgColor': '#282C34',
+            'labelBoxBorderColor': '#ABB2BF',
+            'altBackground': '#20232A'        // Ensure alt/else blocks also use dark bg
         }
     }}%%
 
