@@ -141,7 +141,7 @@ sequenceDiagram
     participant Server as Node.js/Express
     participant Database as PostgreSQL
 
-    group User Registration
+    rect rgb(230, 240, 255) // Light Blue for Registration
         Client->>Server: POST /api/auth/register (username, email, password)
         Server->>Server: Validate input
         alt Validation Fails
@@ -158,7 +158,7 @@ sequenceDiagram
         end
     end
 
-    group User Login
+    rect rgb(230, 255, 230) // Light Green for Login
         Client->>Server: POST /api/auth/login (username, password)
         Server->>Server: Validate input
         Server->>Database: SELECT user by username
@@ -180,7 +180,7 @@ sequenceDiagram
         end
     end
 
-    group Accessing Protected Route
+    rect rgb(255, 245, 230) // Light Orange for Protected Route Access
         Client->>Server: GET /api/auth/me (Header: Authorization: Bearer <AccessToken>)
         Server->>Server: Middleware: authenticateToken verifies Access Token
         alt Access Token Invalid/Expired
@@ -191,7 +191,7 @@ sequenceDiagram
         end
     end
 
-    group Token Refresh
+    rect rgb(255, 230, 230) // Light Red for Token Refresh
         Client->>Server: POST /api/auth/refresh (Cookie: refreshToken=<RefreshTokenValue>)
         Server->>Server: Verify Refresh Token (check hash in DB, expiry, revocation)
         alt Refresh Token Invalid/Expired
@@ -205,7 +205,7 @@ sequenceDiagram
         end
     end
 
-    group User Logout
+    rect rgb(240, 240, 240) // Light Grey for Logout
         Client->>Server: POST /api/auth/logout (Header: Authorization: Bearer <AccessToken>)
         Server->>Server: Middleware: authenticateToken (identifies user)
         Server->>Database: Revoke Refresh Token from DB (associated with cookie/user)
