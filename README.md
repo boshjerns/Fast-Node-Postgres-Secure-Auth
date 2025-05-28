@@ -134,8 +134,37 @@ npm install
 
 ```mermaid
 sequenceDiagram
-    %% Apply a neutral theme for better styling
-    %%{init: {'theme': 'neutral', 'themeVariables': { 'fontSize': '13px', 'sequenceParticipantFontSize': '14px', 'sequenceNoteFontSize': '13px'}}}%%
+    %% Apply a custom high-contrast light theme
+    %%{init: {
+        'theme': 'base', 
+        'themeVariables': {
+            'background': '#FFFFFF',
+            'primaryColor': '#F8F8F8',
+            'primaryBorderColor': '#4A4A4A',
+            'secondaryColor': '#F0F0F0',
+            'tertiaryColor': '#E0E0E0',
+            'primaryTextColor': '#24292e',
+            'secondaryTextColor': '#24292e',
+            'tertiaryTextColor': '#24292e',
+            'lineColor': '#4A4A4A',
+            'textColor': '#24292e',
+            'fontSize': '13px',
+            'sequenceParticipantFontSize': '14px',
+            'sequenceNoteFontSize': '13px',
+            'participantBorder': '#4A4A4A',
+            'participantBackground': '#F0F0F0',
+            'participantTextColor': '#24292e',
+            'noteBorderColor': '#4A4A4A',
+            'noteBkgColor': '#F8F8F8',
+            'noteTextColor': '#24292e',
+            'actorBorder': '#4A4A4A',
+            'actorBkg': '#F0F0F0',
+            'actorTextColor': '#24292e',
+            'labelBoxBkgColor': '#F0F0F0',
+            'labelBoxBorderColor': '#4A4A4A',
+            'altBackground': '#FFFFFF'
+        }
+    }}%%
 
     participant Client as Browser
     participant Server as Node.js/Express
