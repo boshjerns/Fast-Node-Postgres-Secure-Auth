@@ -1,0 +1,46 @@
+{
+  "name": "secure-auth-app",
+  "version": "1.0.0",
+  "description": "Secure authentication application with PostgreSQL, JWT, and HTTPS",
+  "main": "dist/server.js",
+  "scripts": {
+    "start": "node dist/server.js",
+    "dev": "nodemon src/server.ts",
+    "build": "tsc",
+    "db:migrate": "node dist/database/migrate.js",
+    "generate-certs": "node scripts/generate-certs.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "pg": "^8.11.3",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.1.5",
+    "express-validator": "^7.0.1",
+    "dotenv": "^16.3.1",
+    "cookie-parser": "^1.4.6"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.5",
+    "@types/pg": "^8.10.9",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/cors": "^2.8.17",
+    "@types/cookie-parser": "^1.4.6",
+    "typescript": "^5.3.3",
+    "nodemon": "^3.0.2",
+    "ts-node": "^10.9.2"
+  },
+  "keywords": [
+    "authentication",
+    "jwt",
+    "postgresql",
+    "security",
+    "https"
+  ],
+  "author": "",
+  "license": "MIT"
+} 
