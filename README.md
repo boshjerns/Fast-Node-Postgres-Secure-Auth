@@ -142,7 +142,6 @@ sequenceDiagram
     participant Database as PostgreSQL
 
     group User Registration
-        note over Client, Server: User Registration
         Client->>Server: POST /api/auth/register (username, email, password)
         Server->>Server: Validate input
         alt Validation Fails
@@ -160,7 +159,6 @@ sequenceDiagram
     end
 
     group User Login
-        note over Client, Server: User Login
         Client->>Server: POST /api/auth/login (username, password)
         Server->>Server: Validate input
         Server->>Database: SELECT user by username
@@ -183,7 +181,6 @@ sequenceDiagram
     end
 
     group Accessing Protected Route
-        note over Client, Server: Accessing Protected Route
         Client->>Server: GET /api/auth/me (Header: Authorization: Bearer <AccessToken>)
         Server->>Server: Middleware: authenticateToken verifies Access Token
         alt Access Token Invalid/Expired
@@ -195,7 +192,6 @@ sequenceDiagram
     end
 
     group Token Refresh
-        note over Client, Server: Token Refresh
         Client->>Server: POST /api/auth/refresh (Cookie: refreshToken=<RefreshTokenValue>)
         Server->>Server: Verify Refresh Token (check hash in DB, expiry, revocation)
         alt Refresh Token Invalid/Expired
@@ -210,7 +206,6 @@ sequenceDiagram
     end
 
     group User Logout
-        note over Client, Server: User Logout
         Client->>Server: POST /api/auth/logout (Header: Authorization: Bearer <AccessToken>)
         Server->>Server: Middleware: authenticateToken (identifies user)
         Server->>Database: Revoke Refresh Token from DB (associated with cookie/user)
