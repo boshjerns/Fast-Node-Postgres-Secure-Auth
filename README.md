@@ -134,85 +134,80 @@ npm install
 
 ```mermaid
 sequenceDiagram
-    %% Apply a base theme for better styling
-    %%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '13px', 'sequenceParticipantFontSize': '14px', 'sequenceNoteFontSize': '13px'}}}%%
+    %% Apply a default theme for better styling
+    %%{init: {'theme': 'default', 'themeVariables': { 'fontSize': '13px', 'sequenceParticipantFontSize': '14px', 'sequenceNoteFontSize': '13px'}}}%%
 
     participant Client as Browser
     participant Server as Node.js/Express
     participant Database as PostgreSQL
 
-    rect rgb(230, 240, 255) // Light Blue for Registration
-        Client->>Server: POST /api/auth/register (username, email, password)
-        Server->>Server: Validate input
-        alt Validation Fails
-            Server-->>Client: 400 Bad Request (validation errors)
-        else Validation Succeeds
-            Server->>Server: Hash password (bcrypt)
-            Server->>Database: INSERT user (username, email, password_hash)
-            Database-->>Server: User created (id, etc.)
-            Server->>Server: Generate Access Token (short-lived)
-            Server->>Server: Generate Refresh Token (long-lived)
-            Server->>Database: Store Refresh Token hash (linked to user_id)
-            Server-->>Client: 201 Created (User data, Access Token in body, Refresh Token in HttpOnly Cookie)
+    Note over Client,Server: User Registration
+    Client->>Server: POST /api/auth/register (username, email, password)
+    Server->>Server: Validate input
+    alt Validation Fails
+        Server-->>Client: 400 Bad Request (validation errors)
+    else Validation Succeeds
+        Server->>Server: Hash password (bcrypt)
+        Server->>Database: INSERT user (username, email, password_hash)
+        Database-->>Server: User created (id, etc.)
+        Server->>Server: Generate Access Token (short-lived)
+        Server->>Server: Generate Refresh Token (long-lived)
+        Server->>Database: Store Refresh Token hash (linked to user_id)
+        Server-->>Client: 201 Created (User data, Access Token in body, Refresh Token in HttpOnly Cookie)
+        Client->>Client: Store Access Token (localStorage)
+    end
+
+    Note over Client,Server: User Login
+    Client->>Server: POST /api/auth/login (username, password)
+    Server->>Server: Validate input
+    Server->>Database: SELECT user by username
+    alt User Not Found or Inactive
+        Server-->>Client: 401 Unauthorized
+    else User Found
+        Server->>Server: Compare submitted password with stored hash (bcrypt.compare)
+        alt Password Mismatch
+            Server->>Database: Increment failed_login_attempts
+            Server-->>Client: 401 Unauthorized
+        else Password Match
+            Server->>Database: Reset failed_login_attempts, update last_login
+            Server->>Server: Generate Access Token
+            Server->>Server: Generate Refresh Token
+            Server->>Database: Store new Refresh Token hash
+            Server-->>Client: 200 OK (User data, Access Token in body, Refresh Token in HttpOnly Cookie)
             Client->>Client: Store Access Token (localStorage)
         end
     end
 
-    rect rgb(230, 255, 230) // Light Green for Login
-        Client->>Server: POST /api/auth/login (username, password)
-        Server->>Server: Validate input
-        Server->>Database: SELECT user by username
-        alt User Not Found or Inactive
-            Server-->>Client: 401 Unauthorized
-        else User Found
-            Server->>Server: Compare submitted password with stored hash (bcrypt.compare)
-            alt Password Mismatch
-                Server->>Database: Increment failed_login_attempts
-                Server-->>Client: 401 Unauthorized
-            else Password Match
-                Server->>Database: Reset failed_login_attempts, update last_login
-                Server->>Server: Generate Access Token
-                Server->>Server: Generate Refresh Token
-                Server->>Database: Store new Refresh Token hash
-                Server-->>Client: 200 OK (User data, Access Token in body, Refresh Token in HttpOnly Cookie)
-                Client->>Client: Store Access Token (localStorage)
-            end
-        end
+    Note over Client,Server: Accessing Protected Route
+    Client->>Server: GET /api/auth/me (Header: Authorization: Bearer <AccessToken>)
+    Server->>Server: Middleware: authenticateToken verifies Access Token
+    alt Access Token Invalid/Expired
+        Server-->>Client: 401 Unauthorized (Client should then attempt /refresh)
+    else Access Token Valid
+        Server->>Database: Fetch user details by user_id from token
+        Server-->>Client: 200 OK (user details)
     end
 
-    rect rgb(255, 245, 230) // Light Orange for Protected Route Access
-        Client->>Server: GET /api/auth/me (Header: Authorization: Bearer <AccessToken>)
-        Server->>Server: Middleware: authenticateToken verifies Access Token
-        alt Access Token Invalid/Expired
-            Server-->>Client: 401 Unauthorized (Client should then attempt /refresh)
-        else Access Token Valid
-            Server->>Database: Fetch user details by user_id from token
-            Server-->>Client: 200 OK (user details)
-        end
+    Note over Client,Server: Token Refresh
+    Client->>Server: POST /api/auth/refresh (Cookie: refreshToken=<RefreshTokenValue>)
+    Server->>Server: Verify Refresh Token (check hash in DB, expiry, revocation)
+    alt Refresh Token Invalid/Expired
+        Server-->>Client: 401 Unauthorized (User must log in again)
+    else Refresh Token Valid
+        Server->>Server: Generate new Access Token
+        Server->>Server: (Optional: Generate new Refresh Token & update cookie)
+        Server->>Database: Revoke old Refresh Token, Store new one (if rolling)
+        Server-->>Client: 200 OK (New Access Token in body)
+        Client->>Client: Update stored Access Token
     end
 
-    rect rgb(255, 230, 230) // Light Red for Token Refresh
-        Client->>Server: POST /api/auth/refresh (Cookie: refreshToken=<RefreshTokenValue>)
-        Server->>Server: Verify Refresh Token (check hash in DB, expiry, revocation)
-        alt Refresh Token Invalid/Expired
-            Server-->>Client: 401 Unauthorized (User must log in again)
-        else Refresh Token Valid
-            Server->>Server: Generate new Access Token
-            Server->>Server: (Optional: Generate new Refresh Token & update cookie)
-            Server->>Database: Revoke old Refresh Token, Store new one (if rolling)
-            Server-->>Client: 200 OK (New Access Token in body)
-            Client->>Client: Update stored Access Token
-        end
-    end
-
-    rect rgb(240, 240, 240) // Light Grey for Logout
-        Client->>Server: POST /api/auth/logout (Header: Authorization: Bearer <AccessToken>)
-        Server->>Server: Middleware: authenticateToken (identifies user)
-        Server->>Database: Revoke Refresh Token from DB (associated with cookie/user)
-        Server-->>Client: 200 OK (Clear refreshToken cookie)
-        Client->>Client: Remove Access Token from localStorage
-        Client->>Client: Show Login/Register UI
-    end
+    Note over Client,Server: User Logout
+    Client->>Server: POST /api/auth/logout (Header: Authorization: Bearer <AccessToken>)
+    Server->>Server: Middleware: authenticateToken (identifies user)
+    Server->>Database: Revoke Refresh Token from DB (associated with cookie/user)
+    Server-->>Client: 200 OK (Clear refreshToken cookie)
+    Client->>Client: Remove Access Token from localStorage
+    Client->>Client: Show Login/Register UI
 ```
 
 ## API Endpoints
