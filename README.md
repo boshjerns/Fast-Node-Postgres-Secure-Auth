@@ -134,8 +134,8 @@ npm install
 
 ```mermaid
 sequenceDiagram
-    %% Apply a default theme for better styling
-    %%{init: {'theme': 'default', 'themeVariables': { 'fontSize': '13px', 'sequenceParticipantFontSize': '14px', 'sequenceNoteFontSize': '13px'}}}%%
+    %% Apply a neutral theme for better styling
+    %%{init: {'theme': 'neutral', 'themeVariables': { 'fontSize': '13px', 'sequenceParticipantFontSize': '14px', 'sequenceNoteFontSize': '13px'}}}%%
 
     participant Client as Browser
     participant Server as Node.js/Express
